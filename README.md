@@ -115,6 +115,12 @@ Ao executar este artefato, considere os seguintes pontos:
       pip install asyncio
       pip install psutil
       pip install huggingface_hub
+      pip install pyyaml
+      pip install openai
+      pip install torch
+      pip install pandas
+      pip install matplotlib
+      pip install altair
     ```
 
 ## Configuração
@@ -430,8 +436,8 @@ CMD ["python", "src/main.py"]
 2.  **Executar o container usando IA para categorização:**
     _(Este exemplo assume que o modelo Llama3 e a configuração estão dentro da imagem ou acessíveis. Para modelos locais grandes ou para usar um `config.yaml` externo, pode ser necessário montar volumes (`-v`).)_
     `bash
-    docker run vulnsyncai python src/main.py --provider 'llama3' --data-source 'nvd' --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS" "RTI Connext DDS"
-    `
+docker run vulnsyncai python src/main.py --provider 'llama3' --data-source 'nvd' --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS" "RTI Connext DDS"
+`
 
 3.  **Executar o container sem usar IA para categorização:**
 
