@@ -11,7 +11,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Define environment variable
-ENV NAME DDSBuilder
+ENV NAME vulnSyncAI
 
 # Run main.py when the container launches
 CMD ["python", "src/main.py"]
