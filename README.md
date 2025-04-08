@@ -77,54 +77,12 @@ Este README.md está organizado nas seguintes seções:
 
 ## Preocupações com segurança
 
-Caso a execução do artefato ofereça qualquer tipo de risco, esta seção detalha os potenciais perigos e descreve os processos necessários para garantir a segurança dos avaliadores.
+Ao executar este artefato, considere os seguintes pontos:
 
-**Riscos Potenciais**
-
-1.  **Uso de Recursos Externos:**
-
-- Dependências externas ou APIs podem expor chaves de autenticação ou dados sensíveis, caso não sejam configuradas adequadamente.
-- É importante assegurar que qualquer dado enviado a terceiros esteja em conformidade com políticas de privacidade e segura
-
-1. **Execução de Código:**
-
-- O uso de scripts automatizados, especialmente aqueles com permissões elevadas, pode representar riscos se forem configurados incorretamente.
-- Erros no código podem levar ao uso indevido de recursos, como consumo excessivo de CPU/GPU ou perda de dados.
-
-3. **Manipulação de Dados Brutos:**
-
-- Dados não sanitizados podem conter informações prejudiciais ou maliciosas, representando um risco para o sistema onde são processados.
-
-**Medidas de Segurança**
-
-1. **Gerenciamento de Chaves de API:**
-
-- Assegura que as chaves de API sejam armazenadas em variáveis de ambiente e nunca diretamente no código, na config.yaml cuidado com o envio da ´api_key´. Essa configuração é estrito para testes.
-- Exemplo de configuração:
-  ```yaml
-  type: "api"
-  provider: "llama2"
-  site: "https://api.llama-api.com"
-  api_key: "api_key"
-  ```
-
-2. **Execução em Ambientes Isolados:**
-
-- Utiliza ambientes virtuais ou contêineres (e.g., Docker) para isolar a execução do artefato.
-- Recomendação para criar um contêiner:
-
-  ```bash
-    docker build -t vulnsyncai .
-    docker run -p 8000:8000 vulnsyncai
-  ```
-
-3. **Documentação de Restrições:**
-
-- Informa aos revisores quaisquer restrições ou pré-requisitos para garantir a execução segura do artefato.
-
-**Responsabilidade**
-
-- Todos os scripts fornecidos foram projetados para minimizar riscos à segurança. No entanto, é responsabilidade do usuário garantir que o ambiente de execução seja seguro e que as práticas recomendadas descritas acima sejam seguidas.
+- **Chaves de API:** Não exponha suas chaves de API. Armazene-as de forma segura no arquivo `src/config.yaml` (conforme instruído) e **não versione este arquivo com suas chaves em repositórios públicos**. O arquivo `.gitignore` já está configurado para ignorar `config.yaml` por padrão.
+- **Recursos Externos:** A ferramenta interage com APIs externas. Esteja ciente das políticas de privacidade e uso de dados de cada serviço (NVD, Vulners, Google AI, DeepSeek, HuggingFace, OpenAI).
+- **Execução de Código:** Scripts automatizados podem consumir recursos (CPU, memória, rede). Erros no código ou configurações inadequadas podem levar a consumo excessivo.
+- **Ambiente Isolado:** É **altamente recomendável** executar a ferramenta em um ambiente isolado, como um ambiente virtual Python (venv) ou um contêiner Docker, para evitar conflitos de dependência e potenciais problemas de segurança.
 
 ## Instalação
 
@@ -244,184 +202,95 @@ Para iniciar a reprodução dos experimentos apresentados no trabalho "VulnSyncA
 
 Essas credenciais devem ser alteradas no arquivo de configuração, `VulnSyncAI\src\config.yaml`
 
-**Reivindicação #1 (Coleta e Categorização de Vulnerabilidades em DDS)**
+**⚠️ Atenção ao Copiar Chaves de API:**
 
-- **Objetivo:** Demonstrar a capacidade da ferramenta de coletar dados de vulnerabilidades relacionadas a DDS, pré-processá-los, extrair informações e categorizá-los usando Gemini Pro 1.5 e Llama3 (DeepHermes-3-Llama-3-8B-Preview3).
+Ao copiar e colar as chaves de API (por exemplo, do Apêndice do artigo ou de outras fontes), verifique **cuidadosamente** se a chave foi copiada integralmente. É comum que caracteres especiais, como o **underscore (`_`)**, sejam omitidos ou perdidos durante o processo de cópia, especialmente de arquivos PDF.
 
-- **Passos:**
+**Certifique-se de que a chave colada no arquivo de configuração (`config.yaml` ou variáveis de ambiente) seja idêntica à chave original, incluindo todos os underscores.** Chaves incorretas ou incompletas resultarão em falhas de autenticação com os serviços correspondentes.
 
-  1. **Configuração:**
+![alt text](image.png)
 
-     - Certifique-se de que as chaves de API (Vulners, Gemini, HuggingFace) estão configuradas corretamente no arquivo config.yaml.
-     - Crie um arquivo (ex: `search_params_DDS.txt`) contendo os termos de busca relacionados a DDS (ou utilize o arquivo que está no diretório search_params/search_params_DDS.txt):
+**Pré-requisitos:**
 
-       ```txt
-       Data Distribution Service (DDS)
-       FastDDS
-       RTI Connext DDS
-       Open DDS
-       Cyclone DDS
-       IntercomDDS
-       Coredx DDS
-       Gurum DDS
-       OpenSplice DDS
-       MilDDS
-       ```
+1.  Instalação completa e ambiente virtual ativado.
+2.  Arquivo `src/config.yaml` criado e preenchido com as chaves de API **corretas** (Vulners, Gemini, DeepSeek, HuggingFace). **Verifique os underscores!**
+3.  Os arquivos com termos de busca estão disponíveis no diretório `search_files/`.
 
-  2. **Execução para o cenário de categorização do Gemini 1.5 Pro fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos e as chaves de API, se necessário):
+**Execução por Reivindicação (Claim):**
 
-     ```bash
-       python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search-params_DDS.txt --export-format csv --output-file DDS_vulnerabilities_categorized-NVD-GEMINI-API.csv
-     ```
+_(Nota: Os nomes dos arquivos de saída gerados podem variar ligeiramente dependendo da implementação exata do script. Os nomes abaixo são exemplos baseados no apêndice. Adapte conforme necessário.)_
 
-  3. **Execução para o cenário de categorização do Llam3 (DeepHermes-3-Llama-3-8B-Preview3) fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
+**Reivindicação #1: Coleta e Categorização de Vulnerabilidades em DDS**
 
-  ```bash
-    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search-params_DDS.txt --export-format csv --output-file DDS_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
-  ```
+- **Objetivo:** Coletar dados de DDS, categorizar com Gemini e Llama3.
+- **Comandos:**
+  - **Gemini (NVD):**
+    ```bash
+    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search_params_DDS.txt --export-format csv --output-file google_dataset/DDS_vulnerabilities_categorized-NVD-GEMINI-API.csv
+    ```
+  - **Llama3 (NVD):**
+    ```bash
+    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search_params_DDS.txt --export-format csv --output-file llama3_dataset/DDS_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
+    ```
+- **Verificação:** Verifique se os arquivos CSV foram criados nos diretórios `google_dataset/` e `llama3_dataset/`. Abra os arquivos e inspecione as colunas (ID, descrição, colunas de categorização como CWE, etc.). Compare os resultados gerais (tipos de CWEs, fornecedores) com as tabelas/gráficos do artigo, lembrando da natureza estocástica dos LLMs.
 
-  4. **Verificação:**
-     - Verifique se os arquivos `google_dataset/DDS_vulnerabilities_categorized-NVD-GEMINI-API.csv` e `llama3_dataset/DDS_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv` foram criados.
-     - Abra o arquivo e verifique se ele contém os dados esperados:
-       - Colunas com os campos básicos (ID, descrição, etc.).
-       - Colunas adicionais com as categorias extraídas pelos LLMs (CWE, explicação, fornecedor, causa, impacto).
-       - Os valores devem corresponder, aproximadamente, aos resultados apresentados nas tabelas e gráficos do artigo (pequenas variações são esperadas devido à natureza estocástica dos LLMs).
+**Reivindicação #2: Análise de Protocolos de Roteamento em UAVs**
 
-**Reivindicação #2 (Exemplo: Análise de Protocolos de Roteamento em UAVs)**
+- **Objetivo:** Coletar dados de protocolos de roteamento UAV, categorizar com Gemini e Llama3.
+- **Comandos:**
+  - **Gemini (NVD):**
+    ```bash
+    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search_params_UAV.txt --export-format csv --output-file google_dataset/UAV_vulnerabilities_categorized-GEMINI-API.csv
+    ```
+  - **Llama3 (NVD):**
+    ```bash
+    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search_params_UAV.txt --export-format csv --output-file llama3_dataset/UAV_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
+    ```
+- **Verificação:** Similar à Reivindicação #1, verificando os arquivos CSV nos diretórios correspondentes.
 
-- **Objetivo:** Demonstrar a capacidade da ferramenta de coletar e analisar dados _específicos_ de protocolos de roteamento em UAVs.
+**Reivindicação #3: Estudo de Caso MQTT**
 
-- **Passos:**
+- **Objetivo:** Coletar dados de MQTT (NVD e Vulners), categorizar com Gemini, Llama3 e DeepSeek.
+- **Comandos:**
+  - **Gemini (NVD):**
+    ```bash
+    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search_params_MQTT.txt --export-format csv --output-file google_dataset/MQTT_vulnerabilities_categorized-NVD-GEMINI-API.csv
+    ```
+  - **Gemini (Vulners):**
+    ```bash
+    python src/main.py --provider 'google' --data-source 'vulners' --search-file search_files/search_params_MQTT.txt --export-format csv --output-file google_dataset/MQTT_vulnerabilities_categorized-VULNERS-GEMINI-API.csv
+    ```
+  - **Llama3 (NVD):**
+    ```bash
+    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search_params_MQTT.txt --export-format csv --output-file llama3_dataset/MQTT_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
+    ```
+  - **Llama3 (Vulners):**
+    ```bash
+    python src/main.py --provider 'llama3' --data-source 'vulners' --search-file search_files/search_params_MQTT.txt --export-format csv --output-file llama3_dataset/MQTT_vulnerabilities_categorized-VULNERS-LLAMA3-LOCAL.csv
+    ```
+  - **DeepSeek (NVD):**
+    ```bash
+    python src/main.py --provider 'deepseek' --data-source 'nvd' --search-file search_files/search_params_MQTT.txt --export-format csv --output-file deepseek_dataset/MQTT_vulnerabilities_categorized-NVD-DEEPSEEK.csv
+    ```
+  - **DeepSeek (Vulners):**
+    ```bash
+    python src/main.py --provider 'deepseek' --data-source 'vulners' --search-file search_files/search_params_MQTT.txt --export-format csv --output-file deepseek_dataset/MQTT_vulnerabilities_categorized-VULNERS-DEEPSEEK.csv
+    ```
+- **Verificação:** Similar às anteriores, verificando os múltiplos arquivos gerados.
 
-  1. **Configuração:**
+**Reivindicação #4: Estudo de Caso Navegadores Web**
 
-     - Crie um arquivo (ex: `search-params_UAV.txt`) contendo os termos de busca relacionados a protocolos de roteamento de UAVs (ou utilize o arquivo que está no diretório search_params/search-params_UAV.txt):
-
-     ```txt
-     AODV
-     DSR
-     OLSR
-     GRP
-     ```
-
-  2. **Execução para o cenário de categorização do Gemini 1.5 Pro fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos e as chaves de API, se necessário):
-
-  ```bash
-    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search-params_UAV.txt --export-format csv --output-file UAV_vulnerabilities_categorized-GEMINI-API.csv
-  ```
-
-  3. **Execução para o cenário de categorização do Llam3 (DeepHermes-3-Llama-3-8B-Preview3) fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
-
-  ```bash
-    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search-params_UAV.txt --export-format csv --output-file UAV_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
-  ```
-
-  4. **Verificação:**
-     - Verifique se os arquivos `google_dataset/UAV_vulnerabilities_categorized-GEMINI-API.csv` e `llama3_dataset/UAV_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv` foram criados.
-     - Abra o arquivo e verifique se ele contém os dados esperados:
-       - Colunas com os campos básicos (ID, descrição, etc.).
-       - Colunas adicionais com as categorias extraídas pelos LLMs (CWE, explicação, fornecedor, causa, impacto).
-       - Os valores devem corresponder, aproximadamente, aos resultados apresentados nas tabelas e gráficos do artigo (pequenas variações são esperadas devido à natureza estocástica dos LLMs).
-
-**Reivindicação #3 (Estudo de Caso MQTT):**
-
-- **Objetivo:** Demonstrar a capacidade da ferramenta de coletar dados de vulnerabilidades relacionadas ao protocolo MQTT, pré-processá-los, extrair informações relevantes e categorizá-los usando LLMs.
-
-- **Passos:**
-
-  1. **Configuração:**
-
-     - Certifique-se de que as chaves de API (Vulners, Gemini, ChatGPT, Llama) estão configuradas corretamente (variáveis de ambiente ou argumentos de linha de comando).
-     - Crie um arquivo (ex: `search-params_MQTT.txt`) contendo os termos de busca relacionados a MQTT:
-
-       ```txt
-       Eclipse Mosquitto
-       EMQX
-       VerneMQ
-       RabbitMQ
-       HiveMQ
-       ```
-
-  2. **Execução para o cenário de categorização do Gemini 1.5 Pro fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos e as chaves de API, se necessário):
-
-  ```bash
-    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search-params_MQTT.txt --export-format csv --output-file MQTT_vulnerabilities_categorized-NVD-GEMINI-API.csv
-  ```
-
-  3. **Execução para o cenário de categorização do Gemini 1.5 Pro fonte de dados VULNERS:** Execute o seguinte comando (adaptando os nomes dos arquivos e as chaves de API, se necessário):
-
-  ```bash
-    python src/main.py --provider 'google' --data-source 'vulners' --search-file search_files/search-params_MQTT.txt --export-format csv --output-file MQTT_vulnerabilities_categorized-VULNERS-GEMINI-API.csv
-  ```
-
-  4. **Execução para o cenário de categorização do Llam3 (DeepHermes-3-Llama-3-8B-Preview3) fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
-
-  ```bash
-    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search-params_MQTT.txt --export-format csv --output-file MQTT_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
-  ```
-
-  5. **Execução para o cenário de categorização do Llam3 (DeepHermes-3-Llama-3-8B-Preview3) fonte de dados VULNERS:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
-
-  ```bash
-    python src/main.py --provider 'llama3' --data-source 'vulners' --search-file search_files/search-params_MQTT.txt --export-format csv --output-file MQTT_vulnerabilities_categorized-VULNERS-LLAMA3-LOCAL.csv
-  ```
-
-  6. **Execução para o cenário de categorização do DeepSeek (API) fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
-
-  ```bash
-    python src/main.py --provider 'deepseek' --data-source 'nvd' --search-file search_files/search-params_MQTT.txt --export-format csv --output-file MQTT_vulnerabilities_categorized-NVD-DEEPSEEK.csv
-  ```
-
-  7. **Execução para o cenário de categorização do DeepSeek (API) fonte de dados VULNERS:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
-
-  ```bash
-    python src/main.py --provider 'deepseek' --data-source 'vulners' --search-file search_files/search-params_MQTT.txt --export-format csv --output-file MQTT_vulnerabilities_categorized-VULNERS-DEEPSEEK.csv
-  ```
-
-  4. **Verificação:**
-     - Verifique se os arquivos `google_dataset/MQTT_vulnerabilities_categorized-NVD-GEMINI-API.csv`,`google_dataset/MQTT_vulnerabilities_categorized-VULNERS-GEMINI-API.csv`,`llama3_dataset/MQTT_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv`, `llama3_dataset/MQTT_vulnerabilities_categorized-VULNERS-LLAMA3-LOCAL.csv`, `deekseek_dataset/MQTT_vulnerabilities_categorized-NVD-DEEPSEEK.csv` e `deekseek_dataset/MQTT_vulnerabilities_categorized-VULNERS-DEEPSEEK.csv` foram criados.
-     - Abra o arquivo e verifique se ele contém os dados esperados:
-       - Colunas com os campos básicos (ID, descrição, etc.).
-       - Colunas adicionais com as categorias extraídas pelos LLMs (CWE, explicação, fornecedor, causa, impacto).
-       - Os valores devem corresponder, aproximadamente, aos resultados apresentados nas tabelas e gráficos do artigo (pequenas variações são esperadas devido à natureza estocástica dos LLMs).
-
-**Reivindicação #4 (Estudo de Caso Navegadores Web):**
-
-- **Objetivo:** Demonstrar a capacidade da ferramenta de coletar dados de vulnerabilidades relacionadas a navegadores web (browsers), pré-processá-los, extrair informações relevantes e categorizá-los usando LLMs.
-
-- **Passos:**
-
-  1. **Configuração:**
-
-     - Certifique-se de que as chaves de API (Vulners, Gemini, ChatGPT, Llama) estão configuradas corretamente.
-     - Crie um arquivo (ex: `search_params_BROWSERS.txt`) contendo os termos de busca relacionados a navegadores:
-
-       ```txt
-       Google Chrome Browser
-       Microsoft Edge Browser
-       Mozilla Firefox Browser
-       Apple Safari Browser
-       Opera Browser
-       ```
-
-  2. **Execução para o cenário de categorização do Gemini 1.5 Pro fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos e as chaves de API, se necessário):
-
-  ```bash
-    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search-params_BROWSERS.txt --export-format csv --output-file BROWSERS_vulnerabilities_categorized-NVD-GEMINI-API.csv
-  ```
-
-  3. **Execução para o cenário de categorização do Llam3 (DeepHermes-3-Llama-3-8B-Preview3) fonte de dados NVD:** Execute o seguinte comando (adaptando os nomes dos arquivos se necessário):
-
-  ```bash
-    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search-params_BROWSERS.txt --export-format csv --output-file BROWSERS_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
-  ```
-
-  4. **Verificação:**
-     - Verifique se os arquivos `google_dataset/BROWSERS_vulnerabilities_categorized-NVD-GEMINI-API.csv` e `llama3_dataset/BROWSERS_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv` foram criados.
-     - Abra o arquivo e verifique se ele contém os dados esperados:
-       - Colunas com os campos básicos (ID, descrição, etc.).
-       - Colunas adicionais com as categorias extraídas pelos LLMs (CWE, explicação, fornecedor, causa, impacto).
-       - Os valores devem corresponder, aproximadamente, aos resultados apresentados nas tabelas e gráficos do artigo (pequenas variações são esperadas devido à natureza estocástica dos LLMs).
+- **Objetivo:** Coletar dados de Navegadores Web (NVD), categorizar com Gemini e Llama3.
+- **Comandos:**
+  - **Gemini (NVD):**
+    ```bash
+    python src/main.py --provider 'google' --data-source 'nvd' --search-file search_files/search_params_BROWSERS.txt --export-format csv --output-file google_dataset/BROWSERS_vulnerabilities_categorized-NVD-GEMINI-API.csv
+    ```
+  - **Llama3 (NVD):**
+    ```bash
+    python src/main.py --provider 'llama3' --data-source 'nvd' --search-file search_files/search_params_BROWSERS.txt --export-format csv --output-file llama3_dataset/BROWSERS_vulnerabilities_categorized-NVD-LLAMA3-LOCAL.csv
+    ```
+- **Verificação:** Similar às anteriores.
 
 **Geração da análise dos resultados**
 
@@ -526,7 +395,7 @@ python analysis.py deekseek_dataset/MQTT_vulnerabilities_categorized-NVD-DEEPSEE
 
 ## Docker
 
-Você também pode executar o script usando Docker.
+Você também pode construir e executar a ferramenta usando Docker, o que encapsula o ambiente e as dependências.
 
 ### Dockerfile
 
@@ -559,10 +428,10 @@ CMD ["python", "src/main.py"]
     ```
 
 2.  **Executar o container usando IA para categorização:**
-
-    ```bash
+    _(Este exemplo assume que o modelo Llama3 e a configuração estão dentro da imagem ou acessíveis. Para modelos locais grandes ou para usar um `config.yaml` externo, pode ser necessário montar volumes (`-v`).)_
+    `bash
     docker run vulnsyncai python src/main.py --provider 'llama3' --data-source 'nvd' --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS" "RTI Connext DDS"
-    ```
+    `
 
 3.  **Executar o container sem usar IA para categorização:**
 
@@ -574,29 +443,51 @@ CMD ["python", "src/main.py"]
 
 O código-fonte está organizado da seguinte forma:
 
-- `categorization/`: Contém os módulos relacionados à categorização de vulnerabilidades com IA.
-  - `categorizer.py`: Implementa a classe `Categorizer`, responsável por interagir com as APIs dos LLMs e combinar os resultados.
-  - `__init__.py`
-- `data_sources/`: Contém os módulos para extrair dados de diferentes fontes.
-  - `nvd_extractor.py`: Funções para acessar a API do NVD.
-  - `vulners_extractor.py`: Funções para acessar a API do Vulners.
-  - `github_extractor.py`: (Atualmente não utilizado)
-  - `__init__.py`
-- `output/`: Contém os módulos para exportar os dados processados.
-  - `csv_exporter.py`: Funções para exportar dados para CSV.
-  - `__init__.py`
-  - `json_exporter.py`: Funções para exportar dados para JSON.
-- `processing/`: Contém módulos para processamento e normalização dos dados.
-  - `filter.py`: Funções para filtrar as vulnerabilidades.
-  - `normalizer.py`: Funções para normalizar os dados de diferentes fontes.
-  - `load_data_source.py`:Carrega as fontes de dados.
-  - `data_preprocessor.py`: Orquestra o pré-processamento dos dados. -`__init__.py`
-- `src/`: Contém o script principal.
-  - `main.py`: Ponto de entrada principal do programa.
-- `requirements.txt`: Lista as dependências do projeto.
-- `README.md`: Este arquivo.
-- search-params-\*.txt: Arquivos contendo termos para pesquisa.
-- config.yaml: Arquivo de configuração.
+## Estrutura do Código
+
+```
+VulnSyncAI/
+├── .gitignore                # Arquivos/pastas a serem ignorados pelo Git
+├── Dockerfile                # Instruções para construir a imagem Docker
+├── LICENSE                   # Arquivo de licença (GPL-3.0)
+├── README.md                 # Este arquivo
+├── analysis.py               # Script para gerar análises e gráficos dos datasets
+├── requirements.txt          # Dependências Python
+├── search_files/             # Arquivos de texto com termos de busca para os experimentos
+│   ├── search_params_BROWSERS.txt
+│   ├── search_params_DDS.txt
+│   ├── search_params_MQTT.txt
+│   └── search_params_UAV.txt
+├── src/                      # Diretório principal do código fonte
+│   ├── __init__.py
+│   ├── config.yaml.example   # Arquivo de exemplo para configuração
+│   # │── config.yaml         # SEU ARQUIVO DE CONFIGURAÇÃO (NÃO VERSIONAR COM CHAVES!)
+│   ├── main.py               # Ponto de entrada principal do script CLI
+│   ├── categorization/       # Módulos para categorização com IA/LLMs
+│   │   ├── __init__.py
+│   │   └── categorizer.py    # Classe principal de categorização
+│   ├── data_sources/         # Módulos para extrair dados de diferentes fontes
+│   │   ├── __init__.py
+│   │   ├── data_source.py    # Classe base para fontes de dados
+│   │   ├── nvd_extractor.py  # Extrator para NVD
+│   │   └── vulners_extractor.py # Extrator para Vulners API
+│   │   # └── github_extractor.py # (Implementação futura)
+│   ├── output/               # Módulos para exportar dados em diferentes formatos
+│   │   ├── __init__.py
+│   │   ├── data_exporter.py  # Classe base para exportadores
+│   │   ├── csv_exporter.py   # Exportador para CSV
+│   │   └── json_exporter.py  # Exportador para JSON
+│   └── processing/           # Módulos para processamento e normalização de dados
+│       ├── __init__.py
+│       ├── data_preprocessor.py # Orquestrador do pré-processamento
+│       ├── filter.py         # Funções de filtragem
+│       ├── load_data_source.py # Carrega dados das fontes
+│       └── normalizer.py     # Funções de normalização
+├── google_dataset/           # Diretório para datasets gerados com Gemini (exemplo)
+├── llama3_dataset/           # Diretório para datasets gerados com Llama3 (exemplo)
+├── deepseek_dataset/         # Diretório para datasets gerados com DeepSeek (exemplo)
+└── analysis_results/         # Diretório onde os resultados da análise são salvos
+```
 
 ## Extensibilidade
 
@@ -742,6 +633,18 @@ Passos para Adicionar um Novo Modelo de Dados
   ```bash
   python src/main.py --provider 'novo_provedor' --data-source 'nvd' --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS" "RTI Connext DDS"
   ```
+
+## Observações Gerais e Solução de Problemas
+
+- **Reprodutibilidade:** Os resultados exatos da categorização por LLMs podem variar ligeiramente entre execuções devido à natureza estocástica desses modelos. Além disso, as bases de dados (NVD, Vulners) são atualizadas constantemente, então executar o script em momentos diferentes pode resultar em conjuntos de dados ligeiramente diferentes.
+- **Tempo de Execução:** A coleta de dados (especialmente do Vulners) e a categorização com LLMs (especialmente modelos locais ou APIs com limites de taxa) podem levar um tempo considerável, dependendo da quantidade de dados e da velocidade da rede/API.
+- **Limites de Taxa (Rate Limits):** As APIs externas (Vulners, Gemini, DeepSeek, etc.) geralmente possuem limites de taxa. O código pode ter algum tratamento básico, mas execuções intensivas podem atingir esses limites, resultando em erros. Espere um pouco e tente novamente, ou ajuste os parâmetros de busca para reduzir o número de requisições.
+- **Erros Comuns:**
+  - **Erro de Autenticação:** Quase sempre causado por uma chave de API incorreta ou faltando no `config.yaml`. **VERIFIQUE OS UNDERSCORES (`_`)!**
+  - **Erro de Conexão:** Verifique sua conexão com a internet.
+  - **Modelo Não Encontrado (Llama3 local):** Certifique-se de que o modelo especificado em `config.yaml` (`models_config.llama3.model_name`) está correto e que você tem os recursos (RAM, VRAM, espaço em disco) e as bibliotecas (`transformers`, `torch`, etc.) corretamente instalados para executá-lo. Pode ser necessário login na HuggingFace CLI (`huggingface-cli login`).
+  - **Dependências Faltando:** Certifique-se de ter instalado tudo do `requirements.txt` no ambiente virtual ativo.
+- **Saída "UNKNOWN":** Se as colunas de categorização (CWE, causa, etc.) mostrarem "UNKNOWN", significa que o LLM não conseguiu extrair a informação ou houve um erro durante a chamada da API para aquela vulnerabilidade específica.
 
 ## Licença
 
