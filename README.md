@@ -15,15 +15,16 @@ Este README.md está organizado nas seguintes seções:
 1.  **Título e Resumo:** Título do projeto e um resumo conciso (cópia do resumo do artigo).
 2.  **Funcionalidades:** Lista as principais funcionalidades da ferramenta.
 3.  **Dependências:** Lista os requisitos de software (Python, APIs).
-4.  **Preocupações com segurança:** Lista das preocupações com a segurança.
-5.  **Instalação:** Instruções passo a passo para instalar a ferramenta.
-6.  **Configuração:** Instruções para configurar as chaves de API.
-7.  **Uso:** Descreve como reproduzir os experimentos apresentados no artigo..
-8.  **Experimentos:** Explicação dos argumentos de linha de comando e exemplos de uso.
-9.  **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
-10. **Estrutura do Código:** Breve visão geral da organização do código-fonte.
-11. **Extensibilidade**: Como adicionar novas fontes e novos exportadores.
-12. **Licença:** Informações sobre a licença do projeto.
+4.  **Requisitos:** Lista os requisitos de hardware.
+5.  **Preocupações com segurança:** Lista das preocupações com a segurança.
+6.  **Instalação:** Instruções passo a passo para instalar a ferramenta.
+7.  **Configuração:** Instruções para configurar as chaves de API.
+8.  **Uso:** Descreve como reproduzir os experimentos apresentados no artigo..
+9.  **Experimentos:** Explicação dos argumentos de linha de comando e exemplos de uso.
+10. **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
+11. **Estrutura do Código:** Breve visão geral da organização do código-fonte.
+12. **Extensibilidade**: Como adicionar novas fontes e novos exportadores.
+13. **Licença:** Informações sobre a licença do projeto.
 
 ---
 
@@ -74,6 +75,12 @@ Este README.md está organizado nas seguintes seções:
   - **Google Gemini:** Obtenha uma chave em [https://ai.google.dev/](https://ai.google.dev/)
   - **OpenAI ChatGPT:** Obtenha uma chave em [https://platform.openai.com/](https://platform.openai.com/)
   - **Llama (Meta):** Obtenha uma chave em [https://llama-api.com/](https://llama-api.com/)
+
+## Requisitos
+
+Para executar a ferramenta VulnSyncAI, é necessário atender aos seguintes requisitos mínimos de hardware:
+
+1.  Para utilizar a VulnSyncAI, para LLMs, é necessário, no mínimo, um computador com processador quad-core, 8GB de RAM e acesso à Internet. O sistema operacional pode ser Windows ou Linux. É essencial ter Python 3.10 ou superior instalado, além das bibliotecas conforme a documentação da ferramenta. Para as SLMs, servidores que suportem grandes cargas de dados na memória são indispensáveis, sendo fundamental o uso de hardware robusto para o funcionamento eficiente dessas soluções locais.
 
 ## Preocupações com segurança
 
