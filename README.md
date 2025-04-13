@@ -15,15 +15,28 @@ Este README.md está organizado nas seguintes seções:
 1.  **Título e Resumo:** Título do projeto e um resumo conciso (cópia do resumo do artigo).
 2.  **Funcionalidades:** Lista as principais funcionalidades da ferramenta.
 3.  **Dependências:** Lista os requisitos de software (Python, APIs).
+<<<<<<< Updated upstream
+4.  **Requisitos:** Lista os requisitos de hardware.
+5.  **Preocupações com segurança:** Lista das preocupações com a segurança.
+6.  **Instalação:** Instruções passo a passo para instalar a ferramenta.
+7.  **Configuração:** Instruções para configurar as chaves de API.
+8.  **Uso:** Descreve como reproduzir os experimentos apresentados no artigo..
+9.  **Experimentos:** Explicação dos argumentos de linha de comando e exemplos de uso.
+10. **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
+11. **Estrutura do Código:** Breve visão geral da organização do código-fonte.
+12. **Extensibilidade**: Como adicionar novas fontes e novos exportadores.
+13. **Licença:** Informações sobre a licença do projeto.
+=======
 4.  **Preocupações com segurança:** Lista das preocupações com a segurança.
 5.  **Instalação:** Instruções passo a passo para instalar a ferramenta.
-6.  **Configuração:** Instruções para configurar as chaves de API.
-7.  **Uso:** Descreve como reproduzir os experimentos apresentados no artigo..
-8.  **Experimentos:** Explicação dos argumentos de linha de comando e exemplos de uso.
-9.  **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
+6.  **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
+7.  **Configuração:** Instruções para configurar as chaves de API.
+8.  **Uso:** Descreve como reproduzir os experimentos apresentados no artigo..
+9.  **Experimentos:** Explicação dos argumentos de linha de comando e exemplos de uso.
 10. **Estrutura do Código:** Breve visão geral da organização do código-fonte.
 11. **Extensibilidade**: Como adicionar novas fontes e novos exportadores.
 12. **Licença:** Informações sobre a licença do projeto.
+>>>>>>> Stashed changes
 
 ---
 
@@ -75,6 +88,12 @@ Este README.md está organizado nas seguintes seções:
   - **OpenAI ChatGPT:** Obtenha uma chave em [https://platform.openai.com/](https://platform.openai.com/)
   - **Llama (Meta):** Obtenha uma chave em [https://llama-api.com/](https://llama-api.com/)
 
+## Requisitos
+
+Para executar a ferramenta VulnSyncAI, é necessário atender aos seguintes requisitos mínimos de hardware:
+
+1.  Para utilizar a VulnSyncAI, para LLMs, é necessário, no mínimo, um computador com processador quad-core, 8GB de RAM e acesso à Internet. O sistema operacional pode ser Windows ou Linux. É essencial ter Python 3.10 ou superior instalado, além das bibliotecas conforme a documentação da ferramenta. Para as SLMs, servidores que suportem grandes cargas de dados na memória são indispensáveis, sendo fundamental o uso de hardware robusto para o funcionamento eficiente dessas soluções locais.
+
 ## Preocupações com segurança
 
 Ao executar este artefato, considere os seguintes pontos:
@@ -121,6 +140,52 @@ Ao executar este artefato, considere os seguintes pontos:
       pip install pandas
       pip install matplotlib
       pip install altair
+    ```
+
+## Docker
+
+Você também pode construir e executar a ferramenta usando Docker, o que encapsula o ambiente e as dependências.
+
+### Dockerfile
+
+```dockerfile
+# Use uma imagem oficial do Python como imagem base
+FROM python:3.10-slim
+
+# Defina o diretório de trabalho no contêiner
+WORKDIR /app
+
+# Copie o conteúdo do diretório atual para o contêiner em /app
+COPY . /app
+
+# Instale os pacotes necessários especificados em requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Defina a variável de ambiente
+ENV NAME VulnSyncAI
+
+# Execute main.py quando o contêiner for iniciado
+CMD ["python", "src/main.py"]
+```
+
+### Construir e Executar o Contêiner Docker
+
+1.  **Construir a imagem:**
+
+    ```bash
+    docker build -t vulnsyncai .
+    ```
+
+2.  **Executar o container usando IA para categorização:**
+    _(Este exemplo assume que o modelo Llama3 e a configuração estão dentro da imagem ou acessíveis. Para modelos locais grandes ou para usar um `config.yaml` externo, pode ser necessário montar volumes (`-v`).)_
+    `bash
+docker run vulnsyncai python src/main.py --provider 'llama3' --data-source 'nvd' --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS" "RTI Connext DDS"
+`
+
+3.  **Executar o container sem usar IA para categorização:**
+
+    ```bash
+    docker run --provider 'none' --data-source nvd --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS"
     ```
 
 ## Configuração
@@ -398,52 +463,6 @@ python analysis.py deekseek_dataset/MQTT_vulnerabilities_categorized-NVD-DEEPSEE
   - Os arquivos CSV gerados terão as colunas especificadas no código (`id`, `description`, `vendor`, `cwe_category`, etc.).
   - Os valores para `cwe_category`, `explanation`, `cause` e `impact` serão preenchidos pelos LLMs (ou "UNKNOWN" se a categorização falhar).
   - Os valores para `published`, `cvss_score`, `severity` e `source` virão das fontes de dados (NVD ou Vulners).
-
-## Docker
-
-Você também pode construir e executar a ferramenta usando Docker, o que encapsula o ambiente e as dependências.
-
-### Dockerfile
-
-```dockerfile
-# Use uma imagem oficial do Python como imagem base
-FROM python:3.10-slim
-
-# Defina o diretório de trabalho no contêiner
-WORKDIR /app
-
-# Copie o conteúdo do diretório atual para o contêiner em /app
-COPY . /app
-
-# Instale os pacotes necessários especificados em requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Defina a variável de ambiente
-ENV NAME VulnSyncAI
-
-# Execute main.py quando o contêiner for iniciado
-CMD ["python", "src/main.py"]
-```
-
-### Construir e Executar o Contêiner Docker
-
-1.  **Construir a imagem:**
-
-    ```bash
-    docker build -t vulnsyncai .
-    ```
-
-2.  **Executar o container usando IA para categorização:**
-    _(Este exemplo assume que o modelo Llama3 e a configuração estão dentro da imagem ou acessíveis. Para modelos locais grandes ou para usar um `config.yaml` externo, pode ser necessário montar volumes (`-v`).)_
-    `bash
-docker run vulnsyncai python src/main.py --provider 'llama3' --data-source 'nvd' --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS" "RTI Connext DDS"
-`
-
-3.  **Executar o container sem usar IA para categorização:**
-
-    ```bash
-    docker run --provider 'none' --data-source nvd --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS"
-    ```
 
 ## Estrutura do Código
 
