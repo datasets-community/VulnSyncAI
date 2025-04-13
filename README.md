@@ -15,18 +15,6 @@ Este README.md está organizado nas seguintes seções:
 1.  **Título e Resumo:** Título do projeto e um resumo conciso (cópia do resumo do artigo).
 2.  **Funcionalidades:** Lista as principais funcionalidades da ferramenta.
 3.  **Dependências:** Lista os requisitos de software (Python, APIs).
-<<<<<<< Updated upstream
-4.  **Requisitos:** Lista os requisitos de hardware.
-5.  **Preocupações com segurança:** Lista das preocupações com a segurança.
-6.  **Instalação:** Instruções passo a passo para instalar a ferramenta.
-7.  **Configuração:** Instruções para configurar as chaves de API.
-8.  **Uso:** Descreve como reproduzir os experimentos apresentados no artigo..
-9.  **Experimentos:** Explicação dos argumentos de linha de comando e exemplos de uso.
-10. **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
-11. **Estrutura do Código:** Breve visão geral da organização do código-fonte.
-12. **Extensibilidade**: Como adicionar novas fontes e novos exportadores.
-13. **Licença:** Informações sobre a licença do projeto.
-=======
 4.  **Preocupações com segurança:** Lista das preocupações com a segurança.
 5.  **Instalação:** Instruções passo a passo para instalar a ferramenta.
 6.  **Docker (Opcional):** Instruções para construir e executar a ferramenta usando Docker.
@@ -36,7 +24,6 @@ Este README.md está organizado nas seguintes seções:
 10. **Estrutura do Código:** Breve visão geral da organização do código-fonte.
 11. **Extensibilidade**: Como adicionar novas fontes e novos exportadores.
 12. **Licença:** Informações sobre a licença do projeto.
->>>>>>> Stashed changes
 
 ---
 
