@@ -90,13 +90,15 @@ async def main():
 
 
     try:
-        api = HfApi()
-        user = api.whoami()
-        print(f"Logged in as {user['name']}")
+        hf_api_key = config['models_to_evaluate'][0].get('HUGGINGFACE_API_KEY')
+        if hf_api_key:  # Verifica se a API key do Hugging Face foi fornecida
+            api = HfApi()
+            user = api.whoami()
+            print(f"Logged in as {user['name']}")
+        else:
+            print("Hugging Face API key not provided. Skipping login.")
     except Exception as e:
-        print("You are not logged in to Hugging Face. Please log in.")
-        # Substitua 'SEU_TOKEN_AQUI' pelo seu token de acesso do Hugging Face
-        login(token=config['models_to_evaluate'][0].get('hugginface_api_key'))
+        print("Error during Hugging Face login:", e)
 
 
     data_source_choices = config['data_sources'] + ['both']
