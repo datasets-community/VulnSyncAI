@@ -172,7 +172,7 @@ docker run vulnsyncai python src/main.py --provider 'llama3' --data-source 'nvd'
 3.  **Executar o container sem usar IA para categorização:**
 
     ```bash
-    docker run --provider 'none' --data-source nvd --export-format csv --output-file vulnerabilidades.csv --search-params "OpenDDS"
+    docker run vulnsyncai python src/main.py --provider 'none' --data-source 'nvd' --export-format 'csv' --output-file 'vulnerabilidades.csv' --search-params "OpenDDS"
     ```
 
 ## Configuração
