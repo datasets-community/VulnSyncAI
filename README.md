@@ -95,7 +95,7 @@ Ao executar este artefato, considere os seguintes pontos:
 1.  **Clone o repositório:**
 
     ```bash
-    git clone https://github.com/douglasfideles/VulnSyncAI.git
+    git clone https://github.com/datasets-community/VulnSyncAI.git
     cd VulnSyncAI
     ```
 
