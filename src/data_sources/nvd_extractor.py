@@ -37,13 +37,43 @@ class NvdExtractor(DataSourceBase):
         return response.json()
 
     def normalize_data(self, vulnerability):
-        cve = vulnerability.get('cve', {})
-        metrics = cve.get('metrics', {}).get('cvssMetricV31', [{}])[0].get('cvssData', {})
+        cve = vulnerability.get('cve', {}) if isinstance(vulnerability, dict) else {}
+        if not isinstance(cve, dict):
+            cve = {}
+
+        # Descrição em inglês
+        descriptions = cve.get('descriptions', []) if isinstance(cve, dict) else []
+        description = ''
+        if isinstance(descriptions, list):
+            for desc in descriptions:
+                if isinstance(desc, dict) and desc.get('lang') == 'en':
+                    description = desc.get('value', '')
+                    break
+
+        # CVSS v3.1 (pega o mais relevante, geralmente o último ou o de source 'nvd@nist.gov')
+        metrics = cve.get('metrics', {}) if isinstance(cve, dict) else {}
+        cvss_score = ''
+        severity = ''
+        if isinstance(metrics, dict):
+            cvss_v31 = metrics.get('cvssMetricV31', [])
+            if isinstance(cvss_v31, list) and cvss_v31:
+                # Preferencialmente pega o que tem source 'nvd@nist.gov'
+                cvss_data = None
+                for metric in cvss_v31:
+                    if isinstance(metric, dict) and metric.get('source') == 'nvd@nist.gov':
+                        cvss_data = metric.get('cvssData', {})
+                        break
+                if not cvss_data:
+                    cvss_data = cvss_v31[-1].get('cvssData', {}) if isinstance(cvss_v31[-1], dict) else {}
+                if isinstance(cvss_data, dict):
+                    cvss_score = cvss_data.get('baseScore', '')
+                    severity = cvss_data.get('baseSeverity', '')
+
         return {
-            'id': cve.get('id'),
-            'description': next((desc.get('value') for desc in cve.get('descriptions', []) if desc.get('lang') == 'en'), ''),
-            'published': cve.get('published'),
-            'cvss_score': metrics.get('baseScore'),
-            'severity': metrics.get('baseSeverity'),
+            'id': cve.get('id', '') if isinstance(cve, dict) else '',
+            'description': description,
+            'published': cve.get('published', '') if isinstance(cve, dict) else '',
+            'cvss_score': cvss_score,
+            'severity': severity,
             'source': 'nvd'
         }
