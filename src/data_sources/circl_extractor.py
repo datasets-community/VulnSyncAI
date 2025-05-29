@@ -13,7 +13,7 @@ class CirclExtractor(DataSourceBase):
                 for source_key, vulns in circl_response.items():
                     for vuln in vulns:
                         # Cada item é uma lista: [cve_id, vuln_data]
-                        if isinstance(vuln, list) and len(vuln) == 2:
+                        if isinstance(vuln, list) and len(vuln) == 2 and isinstance(vuln[1], dict):
                             vuln_id, vuln_data = vuln
                             vuln_data['cve_id'] = vuln_id
                             vuln_data['vendor'] = param
@@ -48,7 +48,7 @@ class CirclExtractor(DataSourceBase):
         metrics = cna.get("metrics", [])
         cvss_score = None
         severity = None
-        if metrics:
+        if metrics and isinstance(metrics, list):
             cvss = metrics[0].get("cvssV3_1", {})
             cvss_score = cvss.get("baseScore")
             severity = cvss.get("baseSeverity")
