@@ -3,6 +3,7 @@ data_sources:
   - name: "vulners"
     api_key: "VULNERS_API_KEY"
   - name: "cisa"
+  - name: "circl"
 
 normalizers:
   - basic
