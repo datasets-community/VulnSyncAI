@@ -50,6 +50,21 @@ class NvdExtractor(DataSourceBase):
                     description = desc.get('value', '')
                     break
 
+        # Extrair CWE(s) do campo weaknesses
+                # Extrair CWE(s) do campo weaknesses
+        cwes = set()
+        weaknesses = cve.get('weaknesses', []) if isinstance(cve, dict) else []
+        if isinstance(weaknesses, list) and weaknesses:
+            for weakness in weaknesses:
+                descs = weakness.get('description', [])
+                if isinstance(descs, list):
+                    for desc in descs:
+                        if isinstance(desc, dict) and desc.get('lang') == 'en':
+                            value = desc.get('value', '')
+                            if value:
+                                cwes.add(value)
+        cwe = ','.join(sorted(cwes)) if cwes else ''
+
         # CVSS v3.1 (pega o mais relevante, geralmente o último ou o de source 'nvd@nist.gov')
         metrics = cve.get('metrics', {}) if isinstance(cve, dict) else {}
         cvss_score = ''
@@ -68,11 +83,12 @@ class NvdExtractor(DataSourceBase):
                 if isinstance(cvss_data, dict):
                     cvss_score = cvss_data.get('baseScore', '')
                     severity = cvss_data.get('baseSeverity', '')
-
+        
         return {
             'id': cve.get('id', '') if isinstance(cve, dict) else '',
             'description': description,
             'published': cve.get('published', '') if isinstance(cve, dict) else '',
+            'cwe': cwe,
             'cvss_score': cvss_score,
             'severity': severity,
             'source': 'nvd'
