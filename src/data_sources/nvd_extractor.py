@@ -88,7 +88,7 @@ class NvdExtractor(DataSourceBase):
             'id': cve.get('id', '') if isinstance(cve, dict) else '',
             'description': description,
             'published': cve.get('published', '') if isinstance(cve, dict) else '',
-            'cwe': cwe,
+            'cwe_previously': cwe,
             'cvss_score': cvss_score,
             'severity': severity,
             'source': 'nvd'
